@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Wordle</title>
+  <style>
+    .match {
+      background-color: #b59f3b;
+    }
+
+    .exactMatch {
+      background-color: #538d4e;
+    }
+    
+    .keybd-key {
+        width: min(7.2vw, 2.4rem);
+        height: min(9vw, 3rem);
+        font-weight: bold;
+    }
+  </style>
+  <link href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css" type="text/css" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="bg-gradient-to-bl from-green-400 to-blue-500 w-screen h-screen flex flex-col select-none" x-data="wordle" @keyup="processKey($event)">
+    <div class="flex-grow w-screen overflow-x-hidden overflow-y-scroll">
+      <section class="container mx-auto pt-12">
+        <h1 class="text-white text-3xl md:text-4xl text-center">猜词游戏</h1>
+        <div class="flex flex-col pt-4 md:pt-6 space-y-2 md:space-y-3">
+          <template x-for="word in words">
+            <div class="flex justify-center mt-6 md:mt-10 space-x-1 md:space-x-2">
+              <template x-for="letter in word">
+                <div class="border w-12 h-12 md:w-16 md:h-16 border-white flex text-3xl md:text-4xl" x-bind:class="{match:letter.match,exactMatch:letter.exactMatch}">
+                  <span class="m-auto uppercase" x-text="letter.value"></span>
+                </div>
+              </template>
+            </div>
+          </template>
+    
+          <template x-if="locked">
+            <div class="pt-10 text-white text-4xl text-center">
+              单词非法
+            </div>
+          </template>
+    
+          <template x-if="showResult">
+            <div class="pt-10 text-white text-4xl text-center">
+              本次答案为 <span class="uppercase" x-text='todaysWord'></span>
+            </div>
+          </template>
+    
+          <div x-show="gameOver" class="pt-10 text-white text-center">
+            <button @click="restart()" class="bg-dark-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+              新游戏
+            </button>
+    
+            <button x-show="!showResult" @click="showResult=true" class="bg-dark-500 hover:bg-red-700 text-white font-bold py-2 px-4  ml-5 rounded">
+              答案
+            </button>
+          </div>
+    
+        </div>
+      </section>
+    </div>
+  
+    <div id="keyboard" class="bg-gray-200 p-6 text-center hidden">
+      <div class="container mx-auto hidden" id="keybd-container">
+          
+      </div>
+    </div>
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/alpinejs/3.10.3/cdn.min.js" defer></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="assets/js/possibilities.js"></script>
+  <script src="assets/js/game.js"></script>
+  <script>
+    const config = {
+        el: '#keyboard',
+        style: {
+            width: '100vw',
+        }
+    };
+    var kbdContainer = document.getElementById('keybd-container');
+    if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+        $('#keyboard').slideDown(800, function(){
+            $('#keybd-container').fadeIn(800);
+        });
+    }
+    wordle.letters.forEach(function(val, id){
+        $('#keybd-container').append('<div class="mb-2 flex gap-2 justify-center items-center" id="keybd-line-'+id+'"></div>');
+        val.forEach(function(letter){
+            $('#keybd-line-'+id).append('<div class="keybd-key flex-shrink-0 inline-flex justify-center items-center bg-white text-gray-700 hover:bg-gray-700 hover:text-white rounded-md hover:shadow-md" x-on:click="processKey({key: \''+letter+'\'})" id="keybd-letter-'+letter+'">'+((letter == 'Backspace')?'<':letter)+'</div>');
+        });
+    });
+  </script>
+</body>
+
+</html>
