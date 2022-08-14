@@ -104,6 +104,7 @@ const wordle = {
 
   restart() {
     //restart the game
+    this.todaysWord = possibilities[(new Date()).valueOf() % possibilities.length]
     this.words = new Array(5).fill(null).map((x) => new Array(5).fill(null).map((x) => ({ value: "", match: false })))
     this.offset = 0
     this.currentWordPosition = 0
