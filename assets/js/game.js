@@ -1,5 +1,5 @@
 const wordle = {
-  todaysWord: possibilities[Math.floor((new Date() - new Date(2022, 0, 0)) / 8.64e7)],
+  todaysWord: possibilities[(new Date()).valueOf() % possibilities.length],
   currentWordPosition: 0,
   offset: 0,
   offsetLock: 0,
